@@ -29,3 +29,7 @@ Fox Editor page on [itch.io]: [https://ricardo-quintela-dev.itch.io/fox-editor]
 ## Files
 
 This repo contains the python files used to create Fox Editor. The project is open source.
+
+main.py         - main script
+board.py        - contains a class to create board objects on the canvas
+boardCreator.py - contains the script for the uml boards functionality
