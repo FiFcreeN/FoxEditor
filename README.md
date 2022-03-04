@@ -23,7 +23,7 @@ Improve interaction with visual inputs
 
 ## Links
 
-Fox Editor page on [itch.io]: [https://ricardo-quintela-dev.itch.io/fox-editor]
+Fox Editor page on (itch.io)[https://ricardo-quintela-dev.itch.io/fox-editor]
 
 
 ## Files
