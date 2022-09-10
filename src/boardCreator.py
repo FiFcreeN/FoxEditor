@@ -5,13 +5,13 @@ from tkinter import Tk
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 from tkinter.messagebox import askyesnocancel, showwarning
 from json import dumps, loads
-from guiElements.window.window import Window
-from guiElements.window.windowEvents import WindowEvent
+from guiElements.window import Window
+from guiElements.window import WindowEvent
 from board import Board
-from guiElements.inputs.button import Button
-from guiElements.inputs.fastMenu import FastMenu
-from guiElements.inputs.textInput import TextInput
-from guiElements.inputs.colorPicker import ColorPicker
+from guiElements.inputs import Button
+from guiElements.inputs import DropDownMenu
+from guiElements.inputs import TextInput
+from guiElements.inputs import ColorPicker
 
 #colors
 white = (255, 255, 255)
@@ -66,9 +66,9 @@ class BoardCreator:
         boardMenu = [self.addAttribute, self.addMethod, self.addParent, self.pickColor, self.deleteClass]
 
         # FAST MENU OBJECT
-        self.defaultMenu = FastMenu(defaultMenu)
+        self.defaultMenu = DropDownMenu(defaultMenu)
 
-        self.boardMenu = FastMenu(boardMenu)
+        self.boardMenu = DropDownMenu(boardMenu)
 
 
         self.fastMenus = [self.defaultMenu, self.boardMenu, None, None]
@@ -160,7 +160,6 @@ class BoardCreator:
         root = Tk()
         root.withdraw()
         showwarning("ERRO", "Unable to %s the Board." % (action))
-        root.destroy()
 
 
     def setTitle(self):
@@ -183,7 +182,7 @@ class BoardCreator:
         root = Tk()
         root.withdraw()
         self.fileName = askopenfilename(title="Load Board", defaultextension=".json", filetypes=[("JSON files", ".json"), ("All files", ".*")])
-        root.destroy()
+
 
         #safety in case user cancels it or exists it
         if self.fileName == None:
@@ -270,7 +269,6 @@ class BoardCreator:
             root = Tk()
             root.withdraw()
             self.fileName = asksaveasfilename(title="Save Board" ,defaultextension=".json", filetypes=[("JSON file", ".json"), ("All files", ".*")])
-            root.destroy()
 
             #safety in case the user closes the dialog
             if self.fileName == None:
@@ -334,7 +332,7 @@ class BoardCreator:
         return txtInput.getText()
 
 
-    def openFastMenu(self, canvas: Surface, openCondition: bool, click: bool, mouseCoords: tuple, blitCoords: tuple, menu: FastMenu):
+    def openFastMenu(self, canvas: Surface, openCondition: bool, click: bool, mouseCoords: tuple, blitCoords: tuple, menu: DropDownMenu):
         """
         Opens a fast menu and keeps it open when openCondition is True, closes it when openCondition is False\n
 
@@ -347,12 +345,13 @@ class BoardCreator:
             menu: the menu to open
             *events: the event arguments of the menu buttons
         """
-        if openCondition:
+        if openCondition:            
             menu.clickEvent(mouseCoords, click)
-            menu.blit(canvas, blitCoords)
+            menu.pos = blitCoords
+            menu.blit(canvas)
 
 
-    def createBoardMenu(self) -> FastMenu:
+    def createBoardMenu(self) -> DropDownMenu:
         """
         Creates a FastMenu object with all the available boards
 
@@ -361,7 +360,7 @@ class BoardCreator:
         """
         boards = [Button(board.name, (60,60,60), index=i) for i, board in enumerate(self.boards[:-1])]
 
-        menu = FastMenu(boards)
+        menu = DropDownMenu(boards)
 
         return menu
 
@@ -404,7 +403,7 @@ class BoardCreator:
                 root = Tk()
                 root.withdraw()
                 exitEvent = askyesnocancel("Unsaved Work", "Do you want to save this board?", icon="warning")
-                root.destroy()
+                
                 if exitEvent != None:
                     if exitEvent:
                         self.saveFile()
@@ -506,7 +505,7 @@ class BoardCreator:
 
             #open fast menu 4 (in Board menu)
             if self.fastMenuType == 3:
-                self.fastMenus[3] = self.boards[-1].getFastMenu()
+                self.fastMenus[3] = self.boards[-1].getDropDownMenu()
 
 
             #run the fast menu HERE

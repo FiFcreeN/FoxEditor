@@ -2,9 +2,8 @@
 
 import pygame
 
-from guiElements.window.window import Window
+from guiElements.window import Window
 from boardCreator import BoardCreator
-from noteEditor import NoteEditor
 
 
 def main() -> None:
