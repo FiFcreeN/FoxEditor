@@ -1,6 +1,7 @@
 # Created by Ricardo Quintela
 
-from pygame import Surface, Rect, draw
+from math import atan2, cos, degrees, pi, sin
+from pygame import Surface, Rect, draw, Vector2
 from guiElements.inputs import Button
 from guiElements.inputs import DropDownMenu
 from guiElements.inputs import TextInput
@@ -358,13 +359,28 @@ class Board:
 
     def drawAssociations(self, canvas: Surface):
         """
-        Draws lines on screen from the associated board to this one\n
+        Draws arrows on screen from the associated board to this one\n
 
         Args:
             canvas: the surface where to draw the board
         """
         if self.parent != None:
-            draw.line(canvas, self.color, self.center, self.parent.center, 2)
+            coords = Vector2(self.parent.hitbox.clipline(self.center, self.parent.center)[0])
+
+            # vector to know the direction
+            vec = Vector2(self.center) - coords
+            
+            # calculate the angle from the steep to make the arrow relative to the direction of the line
+            angle = atan2(vec.y, vec.x)
+
+            # size of the arrow
+            arrow_size = 15
+
+            # draw the arrow
+            draw.polygon(canvas, self.color, (coords, coords + Vector2(arrow_size * cos(angle + pi/6), arrow_size * sin(angle + pi/6)), coords + Vector2(arrow_size * cos(angle - pi/6), arrow_size * sin(angle - pi/6))))
+
+
+            draw.line(canvas, self.color, self.center, coords, 2)
 
 
 
