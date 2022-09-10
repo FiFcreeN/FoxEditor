@@ -1,10 +1,10 @@
 # Created by Ricardo Quintela
 
-from pygame import Surface, Rect, draw
-from guiElements.inputs.button import Button
-from guiElements.inputs.fastMenu import FastMenu
-from guiElements.inputs.textInput import TextInput
-from math import sin, cos, acos, sqrt
+from math import atan2, cos, degrees, pi, sin
+from pygame import Surface, Rect, draw, Vector2
+from guiElements.inputs import Button
+from guiElements.inputs import DropDownMenu
+from guiElements.inputs import TextInput
 
 #default colors
 white = (255,255,255)
@@ -41,7 +41,7 @@ class Board:
         self.board = Surface(self.dimensions)
 
         #stores all of the texts in this object
-        self.nameText = Button(self.name, white, textColor=black, pos=(7,7), textSize=20, event=lambda: self.setFastMenuType(2))
+        self.nameText = Button(self.name, white, textColor=black, pos=(7,7), textSize=20, event=lambda: self.setDropDownMenuType(2))
 
         self.renameClass = Button("Rename", (60,60,60),
                                           event=lambda: self.resetTextInput(self.name,
@@ -52,7 +52,7 @@ class Board:
                                                                             2))
 
 
-        self.nameMenu = FastMenu([self.renameClass])
+        self.nameMenu = DropDownMenu([self.renameClass])
 
         self.attributeTexts = []
         self.methodTexts = []
@@ -82,7 +82,7 @@ class Board:
                                                                             self.pos[1]),
                                                                             0))
 
-        self.attributeMenu = FastMenu([self.changeAttributeName, self.removeAttributeButton])
+        self.attributeMenu = DropDownMenu([self.changeAttributeName, self.removeAttributeButton])
 
         self.removeMethodButton = Button("Remove", (60, 60, 60),
                                             event=lambda: self.removeMethod(self.hoveredMethod))
@@ -96,10 +96,10 @@ class Board:
                                                                             1))
 
 
-        self.methodMenu = FastMenu([self.changeMethodName, self.removeMethodButton])
+        self.methodMenu = DropDownMenu([self.changeMethodName, self.removeMethodButton])
 
         #the menu that is active in the board
-        self.fastMenuType = 0
+        self.DropDownMenuType = 0
 
 
         #text input
@@ -208,17 +208,17 @@ class Board:
         self.center = self.hitbox.center
 
 
-    def setFastMenuType(self, index: int):
+    def setDropDownMenuType(self, index: int):
         """
         Set the fast menu type\n
 
         Args:
             index: the index o the fast menu that is supposed to be active
         """
-        self.fastMenuType = index
+        self.DropDownMenuType = index
 
 
-    def getFastMenu(self):
+    def getDropDownMenu(self):
         """
         Get the fast menu that is currently active
         Returns:
@@ -228,9 +228,9 @@ class Board:
         if len(self.attributeTexts) + len(self.methodTexts) == 0:
             return self.nameMenu
 
-        if self.fastMenuType == 0:
+        if self.DropDownMenuType == 0:
             return self.attributeMenu
-        elif self.fastMenuType == 1:
+        elif self.DropDownMenuType == 1:
             return self.methodMenu
         else:
             return self.nameMenu
@@ -245,7 +245,7 @@ class Board:
         """
         #add the new text to the texts attribute
         self.attributeTexts.append(Button(attribute, white, textColor=black, index=len(self.attributeTexts),
-                                          event=lambda: self.setFastMenuType(0)))
+                                          event=lambda: self.setDropDownMenuType(0)))
 
         #redraw the board
         self.draw(self.color)
@@ -291,7 +291,7 @@ class Board:
         """
         #add the new text to the texts attribute
         self.methodTexts.append(Button(method, white, textColor=black, index=len(self.methodTexts),
-                                       event=lambda: self.setFastMenuType(1)))
+                                       event=lambda: self.setDropDownMenuType(1)))
 
         #redraw the board
         self.draw(self.color)
@@ -359,13 +359,28 @@ class Board:
 
     def drawAssociations(self, canvas: Surface):
         """
-        Draws lines on screen from the associated board to this one\n
+        Draws arrows on screen from the associated board to this one\n
 
         Args:
             canvas: the surface where to draw the board
         """
         if self.parent != None:
-            draw.line(canvas, self.color, self.center, self.parent.center, 2)
+            coords = Vector2(self.parent.hitbox.clipline(self.center, self.parent.center)[0])
+
+            # vector to know the direction
+            vec = Vector2(self.center) - coords
+            
+            # calculate the angle from the steep to make the arrow relative to the direction of the line
+            angle = atan2(vec.y, vec.x)
+
+            # size of the arrow
+            arrow_size = 15
+
+            # draw the arrow
+            draw.polygon(canvas, self.color, (coords, coords + Vector2(arrow_size * cos(angle + pi/6), arrow_size * sin(angle + pi/6)), coords + Vector2(arrow_size * cos(angle - pi/6), arrow_size * sin(angle - pi/6))))
+
+
+            draw.line(canvas, self.color, self.center, coords, 2)
 
 
 
