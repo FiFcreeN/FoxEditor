@@ -106,9 +106,6 @@ class BoardCreator:
         Args:
             name: the new name of the TextInput object
             pos: the new position of the TextInput object
-
-        Returns:
-
         """
         if index >= 0:
             self.txtInput.setIndex(index)
