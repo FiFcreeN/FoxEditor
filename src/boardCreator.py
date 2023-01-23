@@ -1,6 +1,7 @@
 # Created by Ricardo Quintela
 
 from pygame import Surface
+from pygame.mouse import get_pressed
 from tkinter import Tk
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 from tkinter.messagebox import askyesnocancel, showwarning
@@ -421,8 +422,12 @@ class BoardCreator:
             if self.boards:
                 #potition of the board where it was clicked
                 if self.events.getEvent("mouseButtons")[1]:
-                    self.boards[-1].clickPos = (self.events.getEvent("mousePos")[0] - self.boards[-1].pos[0],
-                                                self.events.getEvent("mousePos")[1] - self.boards[-1].pos[1])
+
+                    for board in self.boards:
+                        board.clickPos = (self.events.getEvent("mousePos")[0] - board.pos[0],
+                                                    self.events.getEvent("mousePos")[1] - board.pos[1])
+                    
+                is_mouse_clicking = get_pressed()[0]
 
                 #move the board to the mouse position - position where it was clicked
                 if self.boards[-1].isClicked(self.events.getEvent("mousePos"), self.events.getEvent("mouseButtons")[1],
@@ -431,6 +436,14 @@ class BoardCreator:
                               self.events.getEvent("mousePos")[1] - self.boards[-1].clickPos[1])
 
                     self.boards[-1].move(boxPos)
+
+                # moving all the boards when clicking in an empty area
+                elif is_mouse_clicking:
+                    for board in self.boards:
+                        boxPos = (self.events.getEvent("mousePos")[0] - board.clickPos[0],
+                                  self.events.getEvent("mousePos")[1] - board.clickPos[1])
+
+                        board.move(boxPos)
 
 
                 #draw board parent lines
