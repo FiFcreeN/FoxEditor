@@ -12,7 +12,7 @@ In fox editor, files are saved via json format files, an easy way to export the 
 
 ## Working as a team
 
-The editor provides a color picker tool to custom your boards, when working as a team, your teammates can know which ones you're doing or which ones are done by color coding the classes. The savefiles can be shared with your teammates and reopened in their editors.
+The editor provides a color picker tool to customize your boards. When working as a team, your coworkers can know which ones you're doing or which ones are done by color coding the classes. The savefiles can be shared with your teammates and reopened in their editors.
 
 
 ## Future objectives
