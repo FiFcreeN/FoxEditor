@@ -1,7 +1,8 @@
 # Created by Ricardo Quintela
 
-from math import atan2, cos, degrees, pi, sin
+from math import atan2, cos, pi, sin
 from pygame import Surface, Rect, draw, Vector2
+from pygame.transform import scale
 from guiElements.inputs import Button
 from guiElements.inputs import DropDownMenu
 from guiElements.inputs import TextInput
@@ -357,12 +358,13 @@ class Board:
         self.parent = None
 
 
-    def drawAssociations(self, canvas: Surface):
+    def drawAssociations(self, canvas: Surface, zoom: float):
         """
         Draws arrows on screen from the associated board to this one\n
 
         Args:
             canvas: the surface where to draw the board
+            zoom: the scale of the boards
         """
         if self.parent != None:
             coords = Vector2(self.parent.hitbox.clipline(self.center, self.parent.center)[0])
@@ -603,11 +605,16 @@ class Board:
             self.txtInput.blit(canvas)
 
 
-    def blit(self, canvas: Surface):
+    def blit(self, canvas: Surface, zoom: float):
         """
         Draws the board on the given canvas\n
 
         Args:
             canvas: the Surface object on which to draw the board
+            zoom: the scale to draw the board
         """
-        canvas.blit(self.board, self.pos)
+        if scale == 1:
+            canvas.blit(self.board, self.pos)
+            return
+
+        canvas.blit(scale(self.board, (int(self.dimensions[0] * zoom), int(self.dimensions[1] * zoom))), self.pos)

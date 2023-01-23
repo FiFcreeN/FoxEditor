@@ -7,19 +7,19 @@ from tkinter.filedialog import asksaveasfilename, askopenfilename
 from tkinter.messagebox import askyesnocancel, showwarning
 from json import dumps, loads
 from guiElements.window import Window
-from guiElements.window import WindowEvent
 from board import Board
 from guiElements.inputs import Button
 from guiElements.inputs import DropDownMenu
 from guiElements.inputs import TextInput
 from guiElements.inputs import ColorPicker
 
+from window import WindowEvent
+
 #colors
 white = (255, 255, 255)
 black = (0,0,0)
 
-
-#TODO - implementar mudança de nome em Classes
+SCALE_INCREMENT = 0.8
 
 
 class BoardCreator:
@@ -94,6 +94,10 @@ class BoardCreator:
         self.isTextInput = False
 
         self.fileName = None
+
+
+        # zooming in
+        self.zoom = 1
 
 
 
@@ -420,6 +424,15 @@ class BoardCreator:
             #       DRAW THE BOARDS
             ###############################
             if self.boards:
+
+                if self.zoom < 2 and self.events.getEvent("mouseWheelUp"):
+                    self.zoom /= SCALE_INCREMENT
+
+
+                if self.zoom > 0.5 and self.events.getEvent("mouseWheelDown"):
+                    self.zoom *= SCALE_INCREMENT
+
+
                 #potition of the board where it was clicked
                 if self.events.getEvent("mouseButtons")[1]:
 
@@ -453,7 +466,7 @@ class BoardCreator:
                 #draw the boards on screen
                 for board in self.boards:
                     board.clickEvent(self.events.getEvent("mousePos"), self.events.getEvent("mouseButtons")[3])
-                    board.blit(self.win.canvas)
+                    board.blit(self.win.canvas, self.zoom)
                     board.runTextInput(self.win.canvas, self.events.getEvent("keyText"),
                                        self.events.getEvent("keyRETURN"), self.events.getEvent("keyBACKSPACE"))
 
